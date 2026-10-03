@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<body>
+    <div style="display: flex; justify-content: space-between; padding: 0px 100px;">
+        <div id="notes">Loading...</div>
+        <div>
+            <input type="text" id = "userNote">
+            <button onclick="addTodo()">Create new note</button>
+        </div>
+    </div>
+    <script>
+
+        async function addTodo(){
+            await axios.post("http://localhost:3000/notes", {
+                note: document.getElementById("userNote").value
+            })
+
+            //show todo in fronted
+            const newNode = document.createElement("div");
+            newNode.innerHTML = document.getElementById("userNote").value;
+            newNode.setAttribute("style", "border: 2px solid black; padding: 10px;")
+            document.getElementById("notes").appendChild(newNode)
+
+            //make the input box empty
+            document.getElementById("userNote").value = "";
+        }
+
+        async function getTodos(){
+
+            // 1.  ---> using Fetch
+            // const response = await fetch("http://localhost:3000/notes")
+            // const json = await response.json()
+            // console.log(json.notes);
+
+
+            // 2 way --> axios
+
+            const response = await axios.get("http://localhost:3000/notes");
+            const  notes = response.data.notes;
+            // console.log(response.data.notes);
+            document.getElementById("notes").innerHTML = "";
+            for(let i=0; i<notes.length; i++){
+                const noteNote = document.createElement("div");
+                noteNote.innerHTML = notes[i];
+                noteNote.setAttribute("style", "border: 2px solid black; padding: 10px;")
+                document.getElementById("notes").appendChild(noteNote)
+            }
+            
+        }
+        getTodos();
+    </script>
+</body>
+</html>
